@@ -1,12 +1,10 @@
 const express = require("express");
 const activitiesRouter = express.Router();
 const {
-  getActivityById,
   getAllActivities,
   createActivity,
   updateActivity,
 } = require("../db/activities");
-const jwt = require("jsonwebtoken");
 const requireUser = require("./utils");
 const { getPublicRoutinesByActivity } = require("../db/routines");
 
@@ -15,7 +13,7 @@ activitiesRouter.use((_, __, next) => {
   next();
 });
 
-activitiesRouter.get("/", async (req, res, next) => {
+activitiesRouter.get("/", async (_, res, next) => {
   try {
     const activities = await getAllActivities();
     res.send(activities);
@@ -36,24 +34,27 @@ activitiesRouter.post("/", requireUser, async (req, res, next) => {
 
 activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
   try {
-    const { activityId } = req.params
+    const { activityId } = req.params;
     const { name, description } = req.body;
-    const activity = await updateActivity({ id: activityId, name, description });
+    const activity = await updateActivity({
+      id: activityId,
+      name,
+      description,
+    });
     res.send(activity);
   } catch ({ message }) {
     next({ message });
   }
 });
 
-activitiesRouter.get('/:activityId/routines', async (req, res, next) => {
-    try {
-        const {activityId} = req.params
-        const activity = await getPublicRoutinesByActivity({id: activityId})
-        res.send(activity)
-
-    } catch ({message}) {
-        next({message})
-    }
-})
+activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
+  try {
+    const { activityId } = req.params;
+    const activity = await getPublicRoutinesByActivity({ id: activityId });
+    res.send(activity);
+  } catch ({ message }) {
+    next({ message });
+  }
+});
 
 module.exports = activitiesRouter;

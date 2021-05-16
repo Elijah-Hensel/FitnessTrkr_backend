@@ -10,8 +10,6 @@ const bodyParser = require("body-parser");
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 
-
-
 const cors = require("cors");
 app.use(cors());
 
@@ -20,14 +18,14 @@ app.use("/api", apiRouter);
 
 const client = require("./db/client");
 
-app.get("*", (req, res, next) => {
+app.get("*", (_, res, __) => {
   res.status(404);
   res.send({ error: "route not found!" });
 });
 
-app.use((error, req, res, next) => {
+app.use((error, _, res, __) => {
   res.status(500);
-  console.log(error, "500 status error")
+  console.log(error, "500 status error");
   res.send({ error: error });
 });
 

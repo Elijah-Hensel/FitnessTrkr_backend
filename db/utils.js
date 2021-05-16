@@ -15,11 +15,11 @@ function dbFields(fields) {
   return { insert, select, vals };
 }
 
-function requireUser(req, res, next) {
+function requireUser(req, _, next) {
   if (!req.user) {
     next({
       name: "MissingUserError",
-      message: "You must be logged in to perform this action"
+      message: "You must be logged in to perform this action",
     });
   }
 
@@ -28,5 +28,5 @@ function requireUser(req, res, next) {
 
 module.exports = {
   dbFields,
-  requireUser
+  requireUser,
 };

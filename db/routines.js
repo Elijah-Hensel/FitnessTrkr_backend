@@ -1,43 +1,49 @@
 const client = require("./client");
 const util = require("./utils");
 
-
 async function attachActivitiesToRoutines(routines) {
-  const routineArray = [...routines]
-  const binds = routines.map((_, index) => `$${index + 1}`).join(", ")
-  const routineIds = routines.map((routine) => routine.id)
+  const routineArray = [...routines];
+  const binds = routines.map((_, index) => `$${index + 1}`).join(", ");
+  const routineIds = routines.map((routine) => routine.id);
   if (routineIds.length === 0) {
-      return
+    return;
   }
   try {
-      const { rows: activities } = await client.query(`
+    const { rows: activities } = await client.query(
+      `
       SELECT activities.*, routine_activities.duration, routine_activities.count,
       routine_activities.id AS "routineActivityId", routine_activities."routineId"
       FROM activities
       JOIN routine_activities ON routine_activities."activityId" = activities.id
       WHERE routine_activities."routineId" IN (${binds});
-    `, routineIds);
-      for (const routine of routineArray) {
-          const activitiesMerge = activities.filter((activity) => routine.id === activity.routineId)
-          routine.activities = activitiesMerge
-      }
-      return routineArray
+    `,
+      routineIds
+    );
+    for (const routine of routineArray) {
+      const activitiesMerge = activities.filter(
+        (activity) => routine.id === activity.routineId
+      );
+      routine.activities = activitiesMerge;
+    }
+    return routineArray;
   } catch (error) {
-      throw error
+    throw error;
   }
   ///check duration id count return routine.activity.id
 }
-
 
 async function getRoutineById(id) {
   try {
     const {
       rows: [routine],
-    } = await client.query(`
+    } = await client.query(
+      `
             SELECT *
             FROM routines
             WHERE id=$1
-        `, [id]);
+        `,
+      [id]
+    );
 
     return routine;
   } catch (err) {
@@ -60,7 +66,6 @@ async function getRoutinesWithoutActivities() {
 }
 
 async function getAllRoutines() {
-
   try {
     const { rows: routines } = await client.query(`
             SELECT routines.*, users.username AS "creatorName"
@@ -68,8 +73,7 @@ async function getAllRoutines() {
             JOIN users ON routines."creatorId"=users.id;
         `);
 
-
-    return await attachActivitiesToRoutines(routines)
+    return await attachActivitiesToRoutines(routines);
   } catch (err) {
     console.error("Could not get all routines!!");
     throw err;
@@ -84,7 +88,7 @@ async function getAllPublicRoutines() {
         JOIN users ON routines."creatorId"=users.id
         WHERE "isPublic"=true;
         `);
-        return await attachActivitiesToRoutines(routines);
+    return await attachActivitiesToRoutines(routines);
   } catch (err) {
     console.error("Could not get all public routines!!");
     throw err;
@@ -102,7 +106,7 @@ async function getAllRoutinesByUser({ username }) {
         `,
       [username]
     );
-    return await attachActivitiesToRoutines(routines)
+    return await attachActivitiesToRoutines(routines);
   } catch (err) {
     console.error("There was a problem getting all routines by user!");
     throw err;
@@ -120,7 +124,7 @@ async function getPublicRoutinesByUser({ username }) {
             `,
       [username, true]
     );
-    return await attachActivitiesToRoutines(routines)
+    return await attachActivitiesToRoutines(routines);
   } catch (err) {
     console.error("There was a problem getting all routines by user!");
     throw err;
@@ -135,7 +139,7 @@ async function getPublicRoutinesByActivity({ id }) {
             JOIN users ON routines."creatorId"=users.id
             WHERE "isPublic"=true
             `);
-            return await attachActivitiesToRoutines(routines)
+    return await attachActivitiesToRoutines(routines);
   } catch (err) {
     console.error("Unable to get public routines by activity!");
     throw err;
@@ -163,7 +167,6 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     throw err;
   }
 }
-
 
 async function updateRoutine({ id, ...fields }) {
   try {

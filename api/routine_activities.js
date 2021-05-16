@@ -4,16 +4,17 @@ const {
   getRoutineActivityById,
   updateRoutineActivity,
   destroyRoutineActivity,
-  getRoutineById
+  getRoutineById,
 } = require("../db");
-const requireUser = require("./utils");
 
 routine_activitiesRouter.use((_, __, next) => {
   console.log("A request is being made to /activities route");
   next();
 });
 
-routine_activitiesRouter.patch("/:routineActivityId", async (req, res, next) => {
+routine_activitiesRouter.patch(
+  "/:routineActivityId",
+  async (req, res, next) => {
     //  Update the count or duration on the routine activity
     const { count, duration } = req.body;
     const id = req.params.routineActivityId;
@@ -39,7 +40,8 @@ routine_activitiesRouter.patch("/:routineActivityId", async (req, res, next) => 
       console.error(error);
       next(error);
     }
-  });
+  }
+);
 
 routine_activitiesRouter.delete(
   "/:routineActivityId",

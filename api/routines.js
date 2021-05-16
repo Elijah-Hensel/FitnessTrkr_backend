@@ -108,21 +108,23 @@ routinesRouter.post("/:routineId/activities", async (req, res, next) => {
     let { routineId, activityId, count, duration } = req.body;
     const newRoutineId = req.params.routineId;
     const parsedRoutineId = parseInt(newRoutineId);
-    
+
     if (parsedRoutineId === routineId) {
-      res.status(402)
-      next({name: "routineActivityAlreadyExistsError", message: "A routine with this id already exists!"})
+      res.status(402);
+      next({
+        name: "routineActivityAlreadyExistsError",
+        message: "A routine with this id already exists!",
+      });
     } else {
-      routineId = parsedRoutineId
+      routineId = parsedRoutineId;
       const activity = await addActivityToRoutine({
         routineId,
         activityId,
         count,
         duration,
       });
-      res.send(activity)
+      res.send(activity);
     }
-
   } catch ({ name, message }) {
     next({
       name: "attachActivitiesToRoutineError",

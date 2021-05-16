@@ -7,7 +7,7 @@ const { getUserById } = require("../db/users");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 
-apiRouter.use(async (req, res, next) => {
+apiRouter.use(async (req, _, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
@@ -19,7 +19,7 @@ apiRouter.use(async (req, res, next) => {
 
     try {
       const parsedToken = jwt.verify(token, JWT_SECRET);
-      const id = parsedToken && parsedToken.id
+      const id = parsedToken && parsedToken.id;
       if (id) {
         req.user = await getUserById(id);
         next();
@@ -50,7 +50,5 @@ apiRouter.use("/routines", routinesRouter);
 
 const routine_activitiesRouter = require("./routine_activities");
 apiRouter.use("/routine_activities", routine_activitiesRouter);
-
-
 
 module.exports = { apiRouter };

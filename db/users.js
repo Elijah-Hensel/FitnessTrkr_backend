@@ -37,7 +37,7 @@ async function getUserByUserName(username) {
       [username]
     );
     if (!user) {
-      return null
+      return null;
     }
 
     return user;
